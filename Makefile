@@ -37,7 +37,7 @@ CXX_OBJECTS = $(CPP_OBJECTS) $(C_OBJECTS)
 
 all: mkdir $(INDEX_SHARED)
 
-$(INDEX_SHARED):$(CXX_OBJECTS)
+$(INDEX_STATIC):$(CXX_OBJECTS)
 	ar cr -o $@ $(foreach n, $(CXX_OBJECTS), $(n)) $(foreach n, $(OBJS), $(n))
 	#******************************************************************************#
 	#                          build static successful !                           #

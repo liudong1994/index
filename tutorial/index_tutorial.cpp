@@ -7,6 +7,8 @@ using namespace index;
 
 int main()
 {
+    // TODO
+    // 对没有指定targetcode的定向 使用ALL定向填充
 
 
     return 0;
