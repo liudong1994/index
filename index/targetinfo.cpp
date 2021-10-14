@@ -63,7 +63,7 @@ DocInfo* TargetInfo::get_doc(uint32_t docno)
 
 int32_t TargetInfo::docid_transfor_docno(int32_t docid)
 {
-
+    
 
 }
 
