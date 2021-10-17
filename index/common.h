@@ -8,7 +8,7 @@
 #include <functional>
 
 
-namespace index
+namespace dindex
 {
 
 // #define _DEBUG

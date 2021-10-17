@@ -6,10 +6,10 @@
 #include <stdio.h>
 
 
-namespace index
+namespace dindex
 {
 
-extern int32_t g_logLevel;
+int32_t g_logLevel = 0;
 static const std::string g_logLevelString[] = {"DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
 
 #define filename(x) strrchr(x,'/')?strrchr(x,'/')+1:x

@@ -3,7 +3,7 @@
 #include <thread>
 #include <vector>
 
-using namespace index;
+using namespace dindex;
 
 int main()
 {

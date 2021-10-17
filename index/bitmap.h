@@ -5,7 +5,7 @@
 #include "common.h"
 
 
-namespace index
+namespace dindex
 {
 
 class Bitmap
@@ -24,15 +24,16 @@ public:
     int32_t set_bit(uint32_t index, bool set);
     int32_t get_bit(uint32_t index);
 
-    int32_t get_all_bits(vector<uint32_t> &all_bits);
+    int32_t get_all_bits(std::vector<uint32_t> &all_bits);
     void clear_all_bits();
 
 
 private:
     uint32_t    m_maxBit = 0;
-    std::vector<uint32_t> m_allBits;
+    std::vector<uint8_t> m_allBits;
 
-    uint32_t    m_usedMaxBit = 0;
+    uint32_t    m_usedMaxBit = 0;   // 最大的bit数值 优化遍历size
+    uint32_t    m_setBitSize = 0;   // 设置为1的bit数
 };
 
 }
