@@ -23,16 +23,17 @@ public:
 
     int32_t init();
 
-    int32_t add_doc(DocInfo *doc);
-    int32_t del_doc(DocInfo* doc);
+    int32_t add_doc(std::shared_ptr<DocInfo> docInfo);
+    int32_t del_doc(std::shared_ptr<DocInfo> docInfo);
+
+    Bitmap& search(const std::string &targetValue);
 
 
 private:
     std::string     m_targetCode;
 
-    // 存储所有的bitno
-    // TODO targetcode分段  分段加锁
-    std::unordered_map<uint32_t, Bitmap>    m_allBitmaps;
+    // key:targetvalue  value:docnos bitmap
+    std::unordered_map<std::string, Bitmap>    m_allBitmaps;
 };
 
 }

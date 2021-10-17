@@ -4,6 +4,7 @@
 #include <memory>
 #include "common.h"
 #include "targetinfo.h"
+#include "spinlock.h"
 
 
 namespace dindex
@@ -56,7 +57,7 @@ public:
     int32_t add_doc(uint32_t docid, const std::vector<std::vector>> &targetValues);
     int32_t update_doc(uint32_t docid, const std::vector<std::vector>> &targetValues);
     int32_t delete_doc(uint32_t docid);
-    int32_t search_doc(const std::vector<std::vector>> &targetValues);
+    int32_t search_doc(const std::vector<Target> &targetValues, std::vector<std::shared_ptr<DocInfo>> &docs);
 
     void print_all_doc();
 
@@ -76,6 +77,7 @@ private:
     // 提出到index.cpp  target只处理定向相关bitmap
 
     // key:docid value:docno
+    Spinlock                                m_docidnoMutex;
     std::unordered_map<uint32_t, uint32_t>  m_docid2docno;
 
     // 存储所有的doc信息

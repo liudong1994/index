@@ -21,10 +21,10 @@ int32_t TargetInfo::init()
     return INDEX_OK;
 }
 
-int32_t TargetInfo::add_doc(DocInfo* doc)
+int32_t TargetInfo::add_doc(std::shared_ptr<DocInfo> docInfo)
 {
     // 遍历doc target values 设置对应bit
-    for (auto &target : doc->m_targets) {
+    for (auto &target : docInfo->m_targets) {
         // target values
         for (auto &targetValue : target->m_targetValues) {
             auto itrBitmap = m_allBitmaps.find(targetValue);
@@ -36,28 +36,28 @@ int32_t TargetInfo::add_doc(DocInfo* doc)
             }
 
             const Bitmap &bitmap = itrBitmap->second;
-            bitmap.set_bit(doc->m_docno, 1);
+            bitmap.set_bit(docInfo->m_docno, 1);
         }
     }
 
-    // 最后设置doc生效
-    m_allDocs[doc->m_docno] = doc;
     return INDEX_OK;
 }
 
-int32_t TargetInfo::del_doc(DocInfo* doc)
+int32_t TargetInfo::del_doc(DocInfo* docInfo)
 {
     // TODO
     // 现将doc设置失效 不然修改bitmap时 会出现定向不准
     
 
-    // m_allDocs[docno] = NULL;
-
-
     // 归还docno
 
-
     return INDEX_OK;
+}
+
+Bitmap &TargetInfo::search(const std::string &targetValue)
+{
+    // TODO
+
 }
 
 
