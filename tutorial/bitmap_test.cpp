@@ -72,7 +72,7 @@ int main()
 
         Bitmap bitmapTmp1 = bitmap;
         Bitmap bitmapTmp2 = bitmap2;
-        bitmapTmp2.clear_all_bits();
+        bitmapTmp2.clear_all_bits(0);
         bitmapTmp1 |= bitmapTmp2;
 
         std::vector<uint32_t> bitAlldata;

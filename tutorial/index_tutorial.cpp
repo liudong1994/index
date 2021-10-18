@@ -34,16 +34,21 @@ int main()
         target.m_targetValues.insert("100002002");
         target.m_targetValues.insert("100002003");
 
+        Target target1;
+        target1.m_targetCode = "100001";
+        target1.m_targetValues.insert("100001001");
+
         std::vector<Target> targetValues;
         targetValues.push_back(target);
+        targetValues.push_back(target1);
 
         index.add_doc(100, targetValues, NULL);
     }
 
     {
         Target target;
-        target.m_targetCode = "100002";
-        target.m_targetValues.insert("100002001");
+        target.m_targetCode = "100001";
+        target.m_targetValues.insert("100001001");
         std::vector<Target> targetValues;
         targetValues.push_back(target);
 
@@ -52,7 +57,7 @@ int main()
 
         printf("search result:\n");
         for (auto &doc : docs) {
-            printf("search docid:%u", doc->m_docid);
+            printf("search docid:%u\n", doc->m_docid);
         }
     }
 

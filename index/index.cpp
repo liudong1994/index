@@ -132,6 +132,7 @@ int32_t Index::search_doc(const std::vector<Target> &targetValues, std::vector<s
 {
     // todo 线程局部变量thread_local
     Bitmap docnos(m_maxDocno);
+    docnos.clear_all_bits(1);
 
     // 遍历查询所有定向  同定向做并集 不同定向做交集
     for (auto &target : targetValues) {

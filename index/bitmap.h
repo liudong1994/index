@@ -24,8 +24,8 @@ public:
     int32_t get_bit(uint32_t index);
 
     void get_all_bits(std::vector<uint32_t> &allBits);
-    std::vector<uint32_t> &&get_all_bits();
-    void clear_all_bits();
+    std::vector<uint32_t> get_all_bits();
+    void clear_all_bits(int32_t bit);
 
 
 private:
@@ -33,7 +33,7 @@ private:
     std::vector<uint8_t> m_allBits;
 
     uint32_t    m_usedMaxBit = 0;   // 最大的bit数值 优化遍历size
-    uint32_t    m_setBitSize = 0;   // 设置为1的bit数
+    uint32_t    m_setBitSize = 0;   // 设置为1的bit数 模糊值
 };
 
 }

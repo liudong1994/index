@@ -23,11 +23,12 @@ Bitmap::~Bitmap()
 
 Bitmap& Bitmap::operator = (const Bitmap &other)
 {
-    for (uint32_t index=0; index<other.m_allBits.size(); ++index) {
+    for (uint32_t index=0; index<m_allBits.size(); ++index) {
         m_allBits[index] = other.m_allBits[index];
     }
 
     m_usedMaxBit = other.m_usedMaxBit;
+    m_setBitSize = other.m_setBitSize;
     return *this;
 }
 
@@ -40,6 +41,7 @@ Bitmap& Bitmap::operator &= (const Bitmap &other)
     }
 
     m_usedMaxBit = minUseBit;
+    m_setBitSize = minUseBit;
     return *this;
 }
 
@@ -52,6 +54,7 @@ Bitmap& Bitmap::operator |= (const Bitmap &other)
     }
 
     m_usedMaxBit = maxUseBit;
+    m_setBitSize = maxUseBit;
     return *this;
 }
 
@@ -108,9 +111,10 @@ void Bitmap::get_all_bits(std::vector<uint32_t> &allBits)
     return ;
 }
 
-std::vector<uint32_t> &&Bitmap::get_all_bits()
+std::vector<uint32_t> Bitmap::get_all_bits()
 {
-    std::vector<uint32_t> allBits(m_setBitSize, 0);
+    std::vector<uint32_t> allBits;
+    allBits.reserve(m_setBitSize);
 
     // 获取所有bit位为1的docno
     for (uint32_t index=0; index<=m_usedMaxBit; ++index) {
@@ -122,12 +126,20 @@ std::vector<uint32_t> &&Bitmap::get_all_bits()
     return std::move(allBits);
 }
 
-void Bitmap::clear_all_bits()
+void Bitmap::clear_all_bits(int32_t bit)
 {
-    m_setBitSize = 0;
-    m_usedMaxBit = 0;
-    // vector数组全部重置为0
-    std::fill(m_allBits.begin(), m_allBits.end(), 0);
+    if (bit) {
+        m_setBitSize = m_maxBit;
+        m_usedMaxBit = m_maxBit;
+        // vector数组全部重置为255
+        std::fill(m_allBits.begin(), m_allBits.end(), 255);
+
+    } else {
+        m_setBitSize = 0;
+        m_usedMaxBit = 0;
+        // vector数组全部重置为0
+        std::fill(m_allBits.begin(), m_allBits.end(), 0);
+    }
 }
 
 }
