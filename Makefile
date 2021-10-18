@@ -8,7 +8,7 @@ CFLAGS  += ${FLAGS}
 LDFLAGS	= -L/usr/lib -lpthread -ldl
 
 # 输出文件名
-INDEX = libindex
+INDEX = libdindex
 INDEX_STATIC = ./lib/$(INDEX).a
 INDEX_SHARED = ./lib/$(INDEX).so
 OUTPUT_PATH = ./obj

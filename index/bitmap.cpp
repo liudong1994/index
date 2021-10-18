@@ -11,24 +11,19 @@ const int32_t BIT_ITEM_SIZE = 8;
 #define BIT_OFFSET(index)   (index % BIT_ITEM_SIZE)
 
 
-Bitmap::Bitmap()
+Bitmap::Bitmap(uint32_t maxBit)
+: m_maxBit(maxBit)
 {
+    m_allBits.resize(m_maxBit / BIT_ITEM_SIZE + 1);
 }
 
 Bitmap::~Bitmap()
 {
 }
 
-int32_t Bitmap::init(uint32_t maxBit)
-{
-    m_maxBit = maxBit;
-    m_allBits.resize(m_maxBit / BIT_ITEM_SIZE + 1);
-    return INDEX_OK;
-}
-
 Bitmap& Bitmap::operator = (const Bitmap &other)
 {
-    for (int32_t index=0; index<m_allBits.size(); ++index) {
+    for (uint32_t index=0; index<m_allBits.size(); ++index) {
         m_allBits[index] = other.m_allBits[index];
     }
 
@@ -99,18 +94,32 @@ int32_t Bitmap::get_bit(uint32_t index)
     return (m_allBits[BIT_INDEX(index)] >> BIT_OFFSET(index)) & 0x01;
 }
 
-int32_t Bitmap::get_all_bits(std::vector<uint32_t> &all_bits)
+void Bitmap::get_all_bits(std::vector<uint32_t> &allBits)
 {
-    all_bits.reserve(m_setBitSize);
+    allBits.reserve(m_setBitSize);
 
     // 获取所有bit位为1的docno
-    for (int32_t index=0; index<=m_usedMaxBit; ++index) {
+    for (uint32_t index=0; index<=m_usedMaxBit; ++index) {
         if ((m_allBits[BIT_INDEX(index)] >> BIT_OFFSET(index)) & 0x01) {
-            all_bits.push_back(index);
+            allBits.push_back(index);
         }
     }
 
-    return INDEX_OK;
+    return ;
+}
+
+std::vector<uint32_t> &&Bitmap::get_all_bits()
+{
+    std::vector<uint32_t> allBits(m_setBitSize, 0);
+
+    // 获取所有bit位为1的docno
+    for (uint32_t index=0; index<=m_usedMaxBit; ++index) {
+        if ((m_allBits[BIT_INDEX(index)] >> BIT_OFFSET(index)) & 0x01) {
+            allBits.push_back(index);
+        }
+    }
+
+    return std::move(allBits);
 }
 
 void Bitmap::clear_all_bits()

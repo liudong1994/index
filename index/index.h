@@ -1,7 +1,9 @@
 #ifndef _INDEX_H_
 #define _INDEX_H_
 
+#include <stack>
 #include <memory>
+#include <unordered_set>
 #include "common.h"
 #include "targetinfo.h"
 #include "spinlock.h"
@@ -11,7 +13,6 @@ namespace dindex
 {
 
 const int32_t INDEX_MAX_DOC = 102400;
-
 
 struct Target
 {
@@ -36,7 +37,7 @@ struct DocInfo
     {
     }
 
-    void set_targets(std::vector<Target> &targets)
+    void set_targets(const std::vector<Target> &targets)
     {
         m_targets.clear();
         m_targets.reserve(targets.size());
@@ -52,10 +53,10 @@ public:
     Index();
     ~Index();
 
-    int32_t init(int32_t maxDoc = INDEX_MAX_DOC);
+    int32_t init(uint32_t maxDoc = INDEX_MAX_DOC);
 
-    int32_t add_doc(uint32_t docid, const std::vector<std::vector>> &targetValues);
-    int32_t update_doc(uint32_t docid, const std::vector<std::vector>> &targetValues);
+    int32_t add_doc(uint32_t docid, const std::vector<Target> &targetValues, void* userData);
+    int32_t update_doc(uint32_t docid, const std::vector<Target> &targetValues, void* userData);
     int32_t delete_doc(uint32_t docid);
     int32_t search_doc(const std::vector<Target> &targetValues, std::vector<std::shared_ptr<DocInfo>> &docs);
 
@@ -63,17 +64,19 @@ public:
 
 
 private:
-    int32_t docid_transfor_docno(uint32_t docid, int32_t &docno);
-    std::shared_ptr<DocInfo>& gen_doc(uint32_t docid, const std::vector<Target> &targetValues, void *userData);
+    int32_t get_docno(uint32_t &docno);
+    void free_docno(uint32_t docno);
+    std::shared_ptr<DocInfo> gen_doc(uint32_t docid, const std::vector<Target> &targetValues, void *userData);
 
-    std::shared_ptr<DocInfo>& get_doc(uint32_t docno);
+    std::shared_ptr<DocInfo> get_doc(uint32_t docno);
+
+    int32_t delete_doc_inner(std::shared_ptr<DocInfo> docInfo);
 
 
 private:
     // key: target  value: all docno bitmap
     std::unordered_map<std::string, TargetInfo> m_allTargetDocnos;
 
-    
     // 提出到index.cpp  target只处理定向相关bitmap
 
     // key:docid value:docno
@@ -86,9 +89,6 @@ private:
     // 辅助: 根据docid转换为docno
     std::stack<uint32_t>    m_resueDocnos;  // 可复用的docno 优先使用
     uint32_t                m_nextDocno;    // 当可复用docno为空时 优先使用当前docno
-
-    // std::list<DocInfo*>     m_freeDocs; // 延时释放的doc TODO 智能指针代替
-
 };
 
 }

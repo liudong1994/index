@@ -11,7 +11,7 @@ namespace dindex
 class Bitmap
 {
 public:
-    Bitmap();
+    Bitmap(uint32_t maxBit);
     ~Bitmap();
 
     int32_t init(uint32_t maxBit);
@@ -20,11 +20,11 @@ public:
     Bitmap& operator &= (const Bitmap &other);
     Bitmap& operator |= (const Bitmap &other);
 
-
     int32_t set_bit(uint32_t index, bool set);
     int32_t get_bit(uint32_t index);
 
-    int32_t get_all_bits(std::vector<uint32_t> &all_bits);
+    void get_all_bits(std::vector<uint32_t> &allBits);
+    std::vector<uint32_t> &&get_all_bits();
     void clear_all_bits();
 
 

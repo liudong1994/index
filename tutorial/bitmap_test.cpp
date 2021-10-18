@@ -7,8 +7,7 @@ using namespace dindex;
 
 int main()
 {
-    Bitmap bitmap;
-    bitmap.init(100000);
+    Bitmap bitmap(100000);
 
     bitmap.set_bit(1000, 1);
     bitmap.set_bit(1001, 1);
@@ -31,8 +30,7 @@ int main()
     }
 
     // bitmap |= &= 
-    Bitmap bitmap2;
-    bitmap2.init(100000);
+    Bitmap bitmap2(100000);
 
     bitmap2.set_bit(100, 1);
     bitmap2.set_bit(1001, 1);

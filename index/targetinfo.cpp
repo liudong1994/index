@@ -1,13 +1,14 @@
 #include "targetinfo.h"
+#include "index.h"
 #include "log.h"
 
 
 namespace dindex
 {
 
-TargetInfo::TargetInfo(const std::string &targetCode, int maxDoc)
-: m_targetCode(targetCode)
-: m_maxDocno(maxDoc)
+TargetInfo::TargetInfo(const std::string &targetCode, uint32_t maxDoc)
+: m_maxDoc(maxDoc)
+, m_targetCode(targetCode)
 {
 }
 
@@ -15,27 +16,28 @@ TargetInfo::~TargetInfo()
 {
 }
 
-int32_t TargetInfo::init()
-{
-    // TODO
-    return INDEX_OK;
-}
-
 int32_t TargetInfo::add_doc(std::shared_ptr<DocInfo> docInfo)
 {
     // 遍历doc target values 设置对应bit
     for (auto &target : docInfo->m_targets) {
         // target values
-        for (auto &targetValue : target->m_targetValues) {
+        for (auto &targetValue : target.m_targetValues) {
+            pthread_rwlock_rdlock(&m_allbitmapLock);
             auto itrBitmap = m_allBitmaps.find(targetValue);
             if (itrBitmap == m_allBitmaps.end()) {
-                // TODO 加锁 如何保证线程安全 这种新定向进行双buffer切换?
-                Bitmap bitmap;
-                m_allBitmaps.insert(make_pair(targetValue, bitmap));
+                pthread_rwlock_unlock(&m_allbitmapLock);
+
+                pthread_rwlock_wrlock(&m_allbitmapLock);
+                m_allBitmaps.insert(std::make_pair(targetValue, Bitmap(m_maxDoc)));
+                pthread_rwlock_unlock(&m_allbitmapLock);
+
                 itrBitmap = m_allBitmaps.find(targetValue);
+
+            } else {
+                pthread_rwlock_unlock(&m_allbitmapLock);
             }
 
-            const Bitmap &bitmap = itrBitmap->second;
+            Bitmap &bitmap = itrBitmap->second;
             bitmap.set_bit(docInfo->m_docno, 1);
         }
     }
@@ -43,23 +45,42 @@ int32_t TargetInfo::add_doc(std::shared_ptr<DocInfo> docInfo)
     return INDEX_OK;
 }
 
-int32_t TargetInfo::del_doc(DocInfo* docInfo)
+int32_t TargetInfo::del_doc(std::shared_ptr<DocInfo> docInfo)
 {
-    // TODO
-    // 现将doc设置失效 不然修改bitmap时 会出现定向不准
-    
+    // 遍历doc target values 设置对应bit
+    for (auto &target : docInfo->m_targets) {
+        // target values
+        for (auto &targetValue : target.m_targetValues) {
+            pthread_rwlock_rdlock(&m_allbitmapLock);
+            auto itrBitmap = m_allBitmaps.find(targetValue);
+            if (itrBitmap == m_allBitmaps.end()) {
+                SERVER_LOG_WARN("targetinfo del value:%s not found", targetValue.c_str());
+                pthread_rwlock_unlock(&m_allbitmapLock);
+                continue;
+            }
+            pthread_rwlock_unlock(&m_allbitmapLock);
 
-    // 归还docno
+            Bitmap &bitmap = itrBitmap->second;
+            bitmap.set_bit(docInfo->m_docno, 0);
+        }
+    }
 
     return INDEX_OK;
 }
 
-Bitmap &TargetInfo::search(const std::string &targetValue)
+Bitmap &&TargetInfo::search(const std::string &targetValue)
 {
-    // TODO
+    Bitmap bitmap(m_maxDoc);
 
+    pthread_rwlock_rdlock(&m_allbitmapLock);
+    auto itrBitmap = m_allBitmaps.find(targetValue);
+    if (itrBitmap != m_allBitmaps.end()) {
+        bitmap = itrBitmap->second;
+    }
+    pthread_rwlock_unlock(&m_allbitmapLock);
+
+    return std::move(bitmap);
 }
-
 
 }
 

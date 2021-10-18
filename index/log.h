@@ -9,14 +9,13 @@
 namespace dindex
 {
 
-int32_t g_logLevel = 0;
 static const std::string g_logLevelString[] = {"DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
 
 #define filename(x) strrchr(x,'/')?strrchr(x,'/')+1:x
 
 #define STDOUT_LOG(level, fmt, args...) \
     do { \
-        if (level >= g_logLevel) { \
+        if (level >= 0) { \
             struct timeval tv;    \
             struct tm tm;    \
             gettimeofday(&tv, NULL);  \
