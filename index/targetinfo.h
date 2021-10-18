@@ -23,7 +23,7 @@ public:
     int32_t add_doc(std::shared_ptr<DocInfo> docInfo);
     int32_t del_doc(std::shared_ptr<DocInfo> docInfo);
 
-    Bitmap &&search(const std::string &targetValue);
+    Bitmap &search(const std::string &targetValue);
 
 
 private:
@@ -33,6 +33,8 @@ private:
     pthread_rwlock_t m_allbitmapLock = PTHREAD_RWLOCK_INITIALIZER;
     // key:targetvalue  value:docnos bitmap
     std::unordered_map<std::string, Bitmap>    m_allBitmaps;
+
+    Bitmap  m_emptyBitmap;
 };
 
 }

@@ -23,7 +23,7 @@ Bitmap::~Bitmap()
 
 Bitmap& Bitmap::operator = (const Bitmap &other)
 {
-    for (uint32_t index=0; index<m_allBits.size(); ++index) {
+    for (uint32_t index=0; index<other.m_allBits.size(); ++index) {
         m_allBits[index] = other.m_allBits[index];
     }
 

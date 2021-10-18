@@ -50,6 +50,7 @@ int main()
         std::vector<std::shared_ptr<DocInfo>> docs;
         index.search_doc(targetValues, docs);
 
+        printf("search result:\n");
         for (auto &doc : docs) {
             printf("search docid:%u", doc->m_docid);
         }

@@ -9,6 +9,7 @@ namespace dindex
 TargetInfo::TargetInfo(const std::string &targetCode, uint32_t maxDoc)
 : m_maxDoc(maxDoc)
 , m_targetCode(targetCode)
+, m_emptyBitmap(maxDoc)
 {
 }
 
@@ -68,18 +69,16 @@ int32_t TargetInfo::del_doc(std::shared_ptr<DocInfo> docInfo)
     return INDEX_OK;
 }
 
-Bitmap &&TargetInfo::search(const std::string &targetValue)
+Bitmap &TargetInfo::search(const std::string &targetValue)
 {
-    Bitmap bitmap(m_maxDoc);
-
     pthread_rwlock_rdlock(&m_allbitmapLock);
     auto itrBitmap = m_allBitmaps.find(targetValue);
-    if (itrBitmap != m_allBitmaps.end()) {
-        bitmap = itrBitmap->second;
-    }
     pthread_rwlock_unlock(&m_allbitmapLock);
 
-    return std::move(bitmap);
+    if (itrBitmap == m_allBitmaps.end()) {
+        return m_emptyBitmap;
+    }
+    return itrBitmap->second;
 }
 
 }
