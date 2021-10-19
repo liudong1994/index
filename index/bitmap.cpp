@@ -123,6 +123,7 @@ std::vector<uint32_t> Bitmap::get_all_bits()
         }
     }
 
+    // todo 引用问题
     return std::move(allBits);
 }
 

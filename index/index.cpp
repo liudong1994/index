@@ -53,7 +53,7 @@ int32_t Index::add_doc(uint32_t docid, const std::vector<Target> &targetValues, 
         }
 
         TargetInfo &targetInfo = itr->second;
-        targetInfo.add_doc(docInfo);
+        targetInfo.add_doc(docInfo->m_docno, target);
     }
 
     // 加锁替换docid到docno的映射关系, 避免更新时新老doc出现投放间隔
@@ -121,7 +121,7 @@ int32_t Index::delete_doc_inner(std::shared_ptr<DocInfo> docInfo)
         }
 
         TargetInfo &targetInfo = itr->second;
-        targetInfo.del_doc(docInfo);
+        targetInfo.del_doc(docInfo->m_docno, target);
     }
 
     free_docno(docInfo->m_docno);
@@ -224,7 +224,7 @@ void Index::print_all_doc()
             continue;
         }
 
-        SERVER_LOG_INFO("docid:%u", docInfo->m_docid);
+        SERVER_LOG_INFO("docid:%u, docno:%u", docInfo->m_docid, docInfo->m_docno);
 
         for (auto &target : docInfo->m_targets) {
             std::string targetValues("");
@@ -239,10 +239,8 @@ void Index::print_all_doc()
     // all targets
     SERVER_LOG_INFO("======== TARGET INFO ========");
     for (auto itr=m_allTargetDocnos.begin(); itr!=m_allTargetDocnos.end(); ++itr) {
-        SERVER_LOG_INFO("target code:%s", itr->first.c_str());
-        // ToDo
-        // TargetInfo &targetInfo = itr->second;
-
+        TargetInfo &targetInfo = itr->second;
+        targetInfo.print_all_targetvalue();
     }
 
     return ;

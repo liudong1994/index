@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <pthread.h>
+#include "target.h"
 #include "common.h"
 #include "bitmap.h"
 
@@ -11,7 +12,6 @@
 namespace dindex
 {
 
-struct DocInfo;
 
 // 所有docno的集合
 class TargetInfo
@@ -20,10 +20,12 @@ public:
     TargetInfo(const std::string &targetCode, uint32_t maxDoc);
     ~TargetInfo();
 
-    int32_t add_doc(std::shared_ptr<DocInfo> docInfo);
-    int32_t del_doc(std::shared_ptr<DocInfo> docInfo);
+    int32_t add_doc(uint32_t docno, const Target &target);
+    int32_t del_doc(uint32_t docno, const Target &target);
 
     Bitmap &search(const std::string &targetValue);
+
+    void print_all_targetvalue();
 
 
 private:

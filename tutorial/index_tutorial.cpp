@@ -8,8 +8,7 @@ using namespace dindex;
 
 int main()
 {
-    // TODO
-    // 对没有指定targetcode的定向 使用ALL定向填充
+    // 可以对没有指定targetcode的定向 使用ALL定向填充
 
     Index index;
     index.init(1024);
@@ -59,6 +58,8 @@ int main()
         for (auto &doc : docs) {
             printf("search docid:%u\n", doc->m_docid);
         }
+
+        index.print_all_doc();
     }
 
     return 0;

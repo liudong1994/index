@@ -14,12 +14,6 @@ namespace dindex
 
 const int32_t INDEX_MAX_DOC = 102400;
 
-struct Target
-{
-    std::string m_targetCode;
-    std::unordered_set<std::string> m_targetValues;
-};
-
 struct DocInfo
 {
     // docid
