@@ -153,7 +153,7 @@ int32_t Index::search_doc(const std::vector<Target> &targetValues, std::vector<s
     }
 
     // 取出最终docInfo  根据docid去重 取最新时间 版本号?
-    std::vector<uint32_t> allDocnos = docnos.get_all_bits();
+    std::vector<uint32_t> &&allDocnos = docnos.get_all_bits();
     docs.reserve(allDocnos.size());
 
     for (auto &docno : allDocnos) {

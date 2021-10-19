@@ -83,7 +83,7 @@ void TargetInfo::print_all_targetvalue()
         Bitmap &bitmap = itr->second;
         
         std::string docnos;
-        std::vector<uint32_t> allDocnos = bitmap.get_all_bits();
+        std::vector<uint32_t> &&allDocnos = bitmap.get_all_bits();
         for (auto &docno : allDocnos) {
             docnos += std::to_string(docno) + ",";
         }

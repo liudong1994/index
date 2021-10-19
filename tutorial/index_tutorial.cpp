@@ -13,53 +13,59 @@ int main()
     Index index;
     index.init(1024);
 
-    {
-        Target target;
-        target.m_targetCode = "100001";
-        target.m_targetValues.insert("100001001");
-        target.m_targetValues.insert("100001002");
-        target.m_targetValues.insert("100001003");
-
+    for (int i=0; i<10; ++i) {
         std::vector<Target> targetValues;
-        targetValues.push_back(target);
 
-        index.add_doc(10, targetValues, NULL);
-    }
+        for (int j=0; j<5; ++j) {
+            int targetCode = 100001 + rand() % 5;
 
-    {
-        Target target;
-        target.m_targetCode = "100002";
-        target.m_targetValues.insert("100002001");
-        target.m_targetValues.insert("100002002");
-        target.m_targetValues.insert("100002003");
-
-        Target target1;
-        target1.m_targetCode = "100001";
-        target1.m_targetValues.insert("100001001");
-
-        std::vector<Target> targetValues;
-        targetValues.push_back(target);
-        targetValues.push_back(target1);
-
-        index.add_doc(100, targetValues, NULL);
-    }
-
-    {
-        Target target;
-        target.m_targetCode = "100001";
-        target.m_targetValues.insert("100001001");
-        std::vector<Target> targetValues;
-        targetValues.push_back(target);
-
-        std::vector<std::shared_ptr<DocInfo>> docs;
-        index.search_doc(targetValues, docs);
-
-        printf("search result:\n");
-        for (auto &doc : docs) {
-            printf("search docid:%u\n", doc->m_docid);
+            Target target;
+            target.m_targetCode = std::to_string(targetCode);
+            target.m_targetValues.insert( std::to_string(targetCode * 1000 + rand() % 20) );
+            target.m_targetValues.insert( std::to_string(targetCode * 1000 + rand() % 20) );
+            target.m_targetValues.insert( std::to_string(targetCode * 1000 + rand() % 20) );
+            targetValues.push_back(target);
         }
 
-        index.print_all_doc();
+        index.add_doc(i, targetValues, NULL);
+    }
+
+    index.print_all_doc();
+
+    std::vector<std::thread> searchThreads;
+    for (int i=0; i<10; ++i) {
+        searchThreads.emplace_back(
+            std::thread([&]() {
+                int targetCode = 100001 + rand() % 5;
+
+                Target target;
+                target.m_targetCode = std::to_string(targetCode);
+                target.m_targetValues.insert( std::to_string(targetCode * 1000 + rand() % 20) );
+
+                std::vector<Target> targetValues;
+                targetValues.push_back(target);
+
+                struct timeval on, off;
+                for (int i=0; i<10; ++i) {
+                    gettimeofday(&on, NULL);
+
+                    std::vector<std::shared_ptr<DocInfo>> docs;
+                    index.search_doc(targetValues, docs);
+
+                    gettimeofday(&off, NULL);
+                    printf("search doc use time us:%u\n", ( off.tv_sec * 1000000 + off.tv_usec ) - ( on.tv_sec * 1000000 + on.tv_usec ));
+                }
+
+                /*printf("search result:\n");
+                for (auto &doc : docs) {
+                    printf("search docid:%u\n", doc->m_docid);
+                }*/
+            })
+        );
+    }
+
+    for (auto &thread : searchThreads) {
+        thread.join();
     }
 
     return 0;
